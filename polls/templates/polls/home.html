@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Polls Home</title>
+</head>
+<body>
+    {% if polls %}
+        <ul>
+            {% for poll in polls %}
+            <li> <a href="{% url 'polls:detail' poll.id %}">{{ poll.title }}</a></li>
+            <ol>
+                {% for choice in poll.choice_set.all %}
+                <li>{{ choice.choice_text }}</li>
+                {% endfor %}
+            </ol>
+            {% endfor %}
+        </ul>
+          
+    {% else %}
+        <p>No polls available right now</p>
+    {% endif %}
+    
+</body>
+</html>

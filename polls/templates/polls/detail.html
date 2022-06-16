@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Document</title>
+</head>
+<body>
+    <h1>{{ poll.title }} by {{ poll.author.username }}</h1>
+    <p>{{ poll.description }}</p>
+    <ul>
+    {% for choice in poll.choice_set.all %}
+        <li>{{ choice.choice_text }}</li>
+    {% endfor %}
+    </ul>
+</body>
+</html>
