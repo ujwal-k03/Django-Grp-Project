@@ -1,0 +1,5 @@
+{% extends "polls/base.html" %}
+{% block content %}
+  <h2 class="mt-5 fw-semibold border-bottom pb-2">Logged out succesfully!</h2>
+  <p class="text-muted text-center mt-2"><a href="{% url 'login' %}">Login Again</a></p>
+{% endblock content %}

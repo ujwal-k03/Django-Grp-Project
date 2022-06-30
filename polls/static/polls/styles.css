@@ -1,0 +1,115 @@
+.hidden {
+    display: none;
+}
+
+html,body {
+    height: 100%;
+    margin: 0;
+}
+
+.chkbox-label{
+    border:1px solid #ccc;
+    padding:10px;
+    margin:0 0 10px;
+    display:block;
+}
+
+input.check + label {
+    border: 1px solid grey;
+    padding: 5px 8px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+input.check:not(:checked) + label:hover {
+    box-shadow: 0px 1px 3px;
+}
+
+input.check + label:active,
+input.check:checked + label {
+  box-shadow: 0px 0px 3px inset;
+  background: #eee;
+}
+
+.pfp-sm {
+    width: 50px;
+    height: 50px;
+}
+
+.pfp-lil {
+    width: 45px;
+    height: 45px;
+}
+
+.pfp{
+    border-radius: 50%;
+}
+
+.wrap {
+    word-wrap: break-word;
+    word-break: break-all;
+}
+
+.w-95{
+    width: 95%;
+}
+
+.w-65{
+    width: 65%;
+}
+
+.fixed-author-card-div{
+    position: fixed;
+    width: 35%;
+    height: 100%;
+    left: 60%;
+    float: right;
+}
+
+.body-div{
+    display: inline-block;
+    width: 65%;
+}
+
+.font-info{
+    font-size: 0.75em;
+}
+
+.b-color{
+    background-color: rgb(195, 255, 248);
+}
+
+
+.main-flex{
+    display: flex;
+    flex-direction: row;
+    min-height: 100%;
+    align-items: stretch;
+}
+
+.flex-left{
+    flex: 1;
+    min-height: 100%;
+    background-color: #e4ddf4;
+
+}
+
+.flex-center{
+    flex: 2;
+    min-height: 100%;
+
+}
+
+.flex-right{
+    flex: 1;
+    min-height: 100%;
+    background-color: #e4ddf4;
+}
+
+.bg-semi-dark{
+    background-color: grey;
+}
+
+.form-group{
+    padding-top: 10px;
+}

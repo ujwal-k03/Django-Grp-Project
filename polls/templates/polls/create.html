@@ -1,0 +1,102 @@
+{% extends 'polls/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <form method="post">
+
+        {% csrf_token %}
+
+        {{ pollform | crispy}}
+        {{ choiceformset.management_form }}
+
+        <button id="add-choice" type="button" class="btn btn-light mt-3 border border-dark rounded">Add Choice</button>
+        <button id="del-choice" type="button" class="btn btn-danger mt-3 border border-dark rounded">Del Choice</button>
+
+        <div id="choice-form-list">
+            <div class="mt-2">
+                <ul class="mb-0">
+                    {% for error in choiceformset.non_form_errors %}
+                    <li class="fw-semibold text-danger mb-0">{{ error }}</li>
+                    {% endfor %}
+                    
+                </ul>
+                
+            </div>
+            {% for choiceform in choiceformset %}
+                <div class="choice-form">
+                    {{ choiceform | crispy}}
+                </div>
+            {% endfor %}
+        </div>
+        
+        <div id="empty-form" class="hidden">{{ choiceformset.empty_form | crispy }}</div>
+        
+        <button type="submit" class="btn btn-outline-success my-3">Submit Poll</button>
+    </form>
+
+    <script>
+        document.getElementById('id_no_of_options_to_be_selected').setAttribute('min',1)
+        document.getElementById('id_no_of_options_to_be_selected').setAttribute('max',2)
+
+
+        const addChoiceButton = document.getElementById('add-choice')
+        const deleteChoiceButton = document.getElementById('del-choice')
+
+        const totalForms = document.getElementById('id_form-TOTAL_FORMS')
+
+        addChoiceButton.addEventListener('click',add_choice_form)
+        deleteChoiceButton.addEventListener('click',del_choice_form)
+        
+        function add_choice_form(args){
+
+            if(event){
+                event.preventDefault()
+            }
+
+            const currentChoiceForms = document.getElementsByClassName('choice-form')
+            let currentChoiceFormCount = currentChoiceForms.length
+
+            const formCopyTarget = document.getElementById('choice-form-list')
+            const emptyFormEl = document.getElementById('empty-form').cloneNode(true)
+
+            emptyFormEl.setAttribute('class','choice-form')
+            emptyFormEl.setAttribute('id',`form-${currentChoiceFormCount}`)
+
+            const regex = new RegExp('__prefix__','g')
+            emptyFormEl.innerHTML = emptyFormEl.innerHTML.replace(regex,currentChoiceFormCount)
+            
+            totalForms.setAttribute('value',currentChoiceFormCount+1)
+            document.getElementById('id_no_of_options_to_be_selected').setAttribute('max',currentChoiceFormCount+1)
+
+            formCopyTarget.append(emptyFormEl)
+
+        }
+
+        function del_choice_form(args){
+
+            if(event){
+                event.preventDefault()
+            }
+
+            const currentChoiceForms = document.getElementsByClassName('choice-form')
+            let currentChoiceFormCount = currentChoiceForms.length
+
+            if (currentChoiceFormCount == 2){
+                alert('You need atleast 2 options in your poll')
+            }
+            else{
+                // Delete form
+                const lastChoiceForm = currentChoiceForms[currentChoiceFormCount-1]
+                lastChoiceForm.remove()
+                
+                totalForms.setAttribute('value',currentChoiceFormCount-1)
+                document.getElementById('id_no_of_options_to_be_selected').setAttribute('max',currentChoiceFormCount-1)
+
+                formCopyTarget.append(emptyFormEl)
+            }
+            
+
+        }
+
+    </script>
+
+{% endblock content %}

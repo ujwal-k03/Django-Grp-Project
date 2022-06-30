@@ -1,0 +1,117 @@
+{% extends "polls/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{% if poll %}
+    <h1 class="border-bottom fw-semibold my-3 text-center">Poll results</h1>
+    <div class="mt-5 p-5 mx-auto border border-dark rounded">
+        <div class="row mt-2 ps-3">
+            <div class="d-flex align-items-center">
+                <div class="flex-grow-1">
+                    <div class="">
+                        <h1 class="d-inline-block">{{ poll.title }}</h1>
+
+                        {% if poll.anonymous_poll %}
+                        <span class="badge text-bg-success">Anonymous</span>
+                        {% else %}
+                        <span class="badge text-bg-danger">Non-Anonymous</span>
+                        {% endif %}
+
+                        {% if poll.public_results %}
+                        <span class="badge text-bg-primary">Public Results</span>
+                        {% else %}
+                        <span class="badge text-bg-secondary">Private Results</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="mx-1">
+                    <a href="{% url 'profile' poll.author.id %}">{{ poll.author }}</a>
+                </div>
+                <div class="mx-1 my-1">
+                    <img src="{{ poll.author.profile.image.url }}" align="middle" class="rounded-circle pfp-sm">
+                </div>
+            </div>
+        </div>
+        <div class="ps-3">
+            <span class="fw-light fst-italic">On {{ poll.date_posted }}</span>
+            {% if poll.votes == 1 %}
+            <span class="fw-semibold">1 Vote</span>
+            {% else %}
+            <span class="fw-semibold ms-2">{{ poll.total_votes }} Votes</span>
+            {% endif %}
+        </div>
+
+        <div class="d-flex ps-3 my-2 align-items-end">
+            {% if poll.description %}
+            <div class="bg-light border rounded px-3 py-2 flex-grow-1">
+                <div class="wrap d-inline-block">
+                    {{ poll.description }}
+                </div>
+            </div>
+            {% endif %}
+            <div class="alert alert-info font-info py-1 mb-0 mx-3 d-inline-block flex-shrink-0">
+                Select exactly {{ poll.no_of_options_to_be_selected }} options
+            </div>
+        </div>
+
+        <div class="row px-4">
+            <ul class="list-unstyled"> 
+                {% for perc,choice in pairs %}
+                    <div class="border rounded p-2 my-2">
+                        <li class="">
+                            {{ choice.choice_text }}
+        
+                            {% if user in choice.voted_by.all %}
+                                <i class="bi bi-check-circle-fill"></i>
+                            {% endif %}
+        
+                            {% if not poll.anonymous_poll %}
+                            <button class="btn btn-light btn-sm" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapse-{{ choice.id }}" aria-expanded="false"
+                                aria-controls="collapse-{{ choice.id }}">
+                                Details
+                            </button>
+                            {% endif %}
+                        </li>
+                        <div class="progress my-2" style="height: 20px;">
+                            {% if perc == 0 %}
+                            <div class="ms-2">
+                                0 Votes | {{ perc }}%
+                            </div>
+        
+                            {% else %}
+                            <div class="progress-bar" role="progressbar" style="width: {{ perc }}%;" aria-valuenow="{{ perc }}"
+                                aria-valuemin="0" aria-valuemax="100">
+                                {% if choice.vote_count == 1 %}
+                                {{ choice.vote_count }} Vote | {{ perc }}%
+                                {% else %}
+                                {{ choice.vote_count }} Votes | {{ perc }}%
+                                {% endif %}
+                            </div>
+                            {% endif %}
+        
+                        </div>
+                        
+                        {% if not poll.anonymous_poll %}
+                            <div class="collapse" id="collapse-{{ choice.id }}">
+                                <ul class="list-group">
+                                    {% for usero in choice.voted_by.all %}
+                                    <li class="list-group-item">
+                                        <a href="{% url 'profile' usero.id %}">{{ usero.username }}</a>
+                                    </li>
+                                    {% endfor%}
+                                </ul>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% else %}
+<h1 class="fw-semibold text-center mt-5">Thank you for voting!</h1>
+<p class="text-center text-muted">This poll's results are private, only the poll author can see them.</p>
+
+{% endif %}
+
+{% endblock content %}

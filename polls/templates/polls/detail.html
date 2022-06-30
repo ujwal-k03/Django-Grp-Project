@@ -1,15 +1,112 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Document</title>
-</head>
-<body>
-    <h1>{{ poll.title }} by {{ poll.author.username }}</h1>
-    <p>{{ poll.description }}</p>
-    <ul>
-    {% for choice in poll.choice_set.all %}
-        <li>{{ choice.choice_text }}</li>
-    {% endfor %}
-    </ul>
-</body>
-</html>
+{% extends "polls/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="mt-5 p-5 mx-auto border border-dark rounded">
+    <div class="row mt-2 ps-3">
+        <div class="d-flex align-items-center">
+            <div class="flex-grow-1">
+                <div class="">
+                    <h1 class="d-inline-block">{{ poll.title }}</h1>
+    
+                    {% if poll.anonymous_poll %}
+                    <span class="badge text-bg-success">Anonymous</span>
+                    {% else %}
+                    <span class="badge text-bg-danger">Non-Anonymous</span>
+                    {% endif %}
+
+                    {% if poll.public_results %}
+                    <span class="badge text-bg-primary">Public Results</span>
+                    {% else %}
+                    <span class="badge text-bg-secondary">Private Results</span>
+                    {% endif %}
+                </div>  
+            </div>
+            <div class="mx-1">
+                <a href="{% url 'profile' poll.author.id %}">{{ poll.author }}</a>
+            </div>
+            <div class="mx-1 my-1">
+                <img src="{{ poll.author.profile.image.url }}" align="middle" class="rounded-circle pfp-sm">
+            </div>
+        </div>
+    </div>
+    <div class="ps-3">
+        <span class="fw-light fst-italic">On {{ poll.date_posted }}</span>
+        {% if poll.votes == 1 %}
+            <span class="fw-semibold">1 Vote</span>  
+        {% else %}
+            <span class="fw-semibold ms-2">{{ poll.total_votes }} Votes</span>  
+        {% endif %}
+    </div>
+
+    <div class="d-flex ps-3 my-2 align-items-end justify-content-end">
+        {% if poll.description %}
+            <div class="bg-light border rounded px-3 py-2 flex-grow-1">
+                <div class="wrap d-inline-block">
+                    {{ poll.description }}
+                </div>
+            </div>
+        {% endif %}
+        <div class="alert alert-info font-info py-1 mb-0 mx-3 d-inline-block flex-shrink-0">
+            Select exactly {{ poll.no_of_options_to_be_selected }} options
+        </div>
+    </div>
+
+    <div class="row">
+        <form action="{% url 'polls:detail' poll.id %}" method="post" class="">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger font-info pe-2 pt-0 ps-0 pb-0 ms-3 mt-0 mb-2 d-inline-block text-center">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+            
+
+            {% for field in form %}
+            <div class="fieldWrapper">
+
+                {% if field.errors %}
+                    <div class="alert alert-danger font-info pe-2 pt-0 ps-0 pb-0 ms-3 mt-0 mb-2 d-inline-block text-center">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+                
+
+                {% for val,text in choices %}
+                <div>                    
+                    <input type="checkbox" name="multiple_choice_field" id="checkbox-{{ val }}" class="check" value="{{ val }}">
+                    <label class="chkbox-label wrap w-95 d-inline-block form-check-label" for="checkbox-{{ val }}">{{ text }}</label>
+                </div>
+                {% endfor %}
+
+                {% if field.help_text %}
+                <p class="help">{{ field.help_text | safe }}</p>
+                {% endif %}
+
+            </div>
+            {% endfor %}
+
+            <button class="btn btn-outline-success "type="submit">Submit</button>
+
+        </form>
+    </div>
+</div>
+
+
+
+
+<script>
+    var checks = document.querySelectorAll(".check");
+    var max = {{ poll.no_of_options_to_be_selected }};
+
+    for (var i = 0; i < checks.length; i++)
+        checks[i].onclick = selectiveCheck;
+
+    function selectiveCheck(event) {
+        var checkedChecks = document.querySelectorAll(".check:checked");
+        if (checkedChecks.length >= max + 1)
+            return false;
+    };
+
+</script>
+{% endblock content %}
