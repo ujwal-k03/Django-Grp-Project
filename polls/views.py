@@ -7,10 +7,6 @@ from . import forms
 from django.forms import modelformset_factory
 from django.db.models import Q
 
-
-def about(request):
-    pass
-
 def home(request):
 
     sortform = forms.SortForm(request.GET or None)
